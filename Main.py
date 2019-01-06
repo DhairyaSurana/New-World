@@ -20,6 +20,7 @@ class MyGame(arcade.Window):
         self.wall_sprite = None
 
         self.physics_engine = None
+        self.background = None
 
     def setup(self):
 
@@ -52,7 +53,7 @@ class MyGame(arcade.Window):
         self.physics_engine = arcade.PhysicsEngineSimple(self.player_sprite,
                                                          self.wall_list)
 
-        arcade.set_background_color(arcade.color.SKY_BLUE)
+        self.background = arcade.load_texture("grass.png")
 
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed. """
@@ -79,6 +80,9 @@ class MyGame(arcade.Window):
     def on_draw(self):
         """ Render the screen. """
         arcade.start_render()
+
+        arcade.draw_texture_rectangle(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2,
+                                      SCREEN_WIDTH, SCREEN_HEIGHT, self.background)
         self.wall_list.draw()
         self.player_list.draw()
 
