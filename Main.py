@@ -3,6 +3,7 @@ import arcade
 SCREEN_WIDTH = 600
 SCREEN_HEIGHT = 600
 
+VIEWPORT_MARGIN = 40
 MOVEMENT_SPEED = 5
 
 
@@ -55,6 +56,12 @@ class MyGame(arcade.Window):
 
         self.background = arcade.load_texture("grass.png")
 
+         # Set the viewport boundaries
+        # These numbers set where we have 'scrolled' to.
+        self.view_left = 0
+        self.view_bottom = 0
+
+
     def on_key_press(self, key, modifiers):
         """Called whenever a key is pressed. """
         if key == arcade.key.UP:
@@ -92,6 +99,45 @@ class MyGame(arcade.Window):
         # Call update on all sprites (The sprites don't do much in this
         # example though.)
         self.physics_engine.update()
+
+
+        # --- Manage Scrolling ---
+
+        # Track if we need to change the viewport
+
+        changed = False
+
+        # Scroll left
+        left_bndry = self.view_left + VIEWPORT_MARGIN
+        if self.player_sprite.left < left_bndry:
+            self.view_left -= left_bndry - self.player_sprite.left
+            changed = True
+
+        # Scroll right
+        right_bndry = self.view_left + SCREEN_WIDTH - VIEWPORT_MARGIN
+        if self.player_sprite.right > right_bndry:
+            self.view_left += self.player_sprite.right - right_bndry
+            changed = True
+
+        # Scroll up
+        top_bndry = self.view_bottom + SCREEN_HEIGHT - VIEWPORT_MARGIN
+        if self.player_sprite.top > top_bndry:
+            self.view_bottom += self.player_sprite.top - top_bndry
+            changed = True
+
+        # Scroll down
+        bottom_bndry = self.view_bottom + VIEWPORT_MARGIN
+        if self.player_sprite.bottom < bottom_bndry:
+            self.view_bottom -= bottom_bndry - self.player_sprite.bottom
+            changed = True
+
+        if changed:
+            arcade.set_viewport(self.view_left,
+                                SCREEN_WIDTH + self.view_left,
+                                self.view_bottom,
+                                SCREEN_HEIGHT + self.view_bottom)
+
+
 
 
 def main():
